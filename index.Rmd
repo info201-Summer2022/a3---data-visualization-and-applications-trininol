@@ -1,0 +1,87 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+### An introduction of the problem domain and a description of the variable(s) you are choosing to analyze (and why!)
+
+### Introduction
+
+In the United States, one of the systems where racism is very prominent is its prision system. Due to the history of some unjust incarceration polices, the proportion of white people and people of color that are incarcerated is very disproportionate.  
+
+The dataset we will be using is collected by [Vera Institute]('https://github.com/vera-institute/incarceration-trends#documentation'), which contains the county and jurisdiction level jail data from 1970 to 2018, prison data from 1983 to 2016, and State level prison data from 2019 to 2021.
+
+### Variables
+Some of the variables we will be focusing on:  
+First we will include the variables for location and time (year, state, county_name) for the location of the jail data to evaluate how each county is doing.  
+
+Because of the disproportion of white people and people of color that are incarcerated, we will be analyzing the incarcerated population by race ('aapi_prison_pop, black_prison_pop, latinx_prison_pop, native_prison_pop, other_race_prison_pop, white_prison_pop') 
+These variables refer to the prison population on December 31 of a given year in different race categories, Asian or Pacific Islander, Black, Latinx, Native American, White, or Other.   
+
+We will also be looking at the percent incarcerated from ages 15 to 64 of different races. (
+aapi_prison_pop_rate, black_prison_pop_rate, latinx_prison_pop_rate, native_prison_pop_rate, white_prison_pop_rate) The incarceration rate refers to the number of people incarcerated compared to people of that race living there.
+
+
+### Summary information
+
+```{r summary, include=FALSE}
+source('analysis.R')
+```
+
+In order to show the disproportion of races, the data is summarized by 5 values, the average number of incarcerated people across different races, the highest number of incarcerated people across different races, prison population change from 1970 and 2018 across different races, the average rate of incarcerated people, the highest rate of incarcerated people across different races.
+
+1. What is the average number of incarcerated people across different races?
+
+```{r avg_incar, echo=FALSE}
+avg_incar()
+```
+
+- First, we want to see what the average prison population is for different races. This stat can be used to summarize the average difference in races. The average population of incarcerated people across different races is 163 in white population, 247 in black population, 101 in latinx population, 7 in asian or pacific islander population, 7 native american population, and 9 in other race population.
+
+2. What is the highest prison population of incarcerated people across different races?
+
+```{r max_incar, echo=FALSE}
+max_incar()
+```
+
+- Second, we are going to find the highest number of prisoners at a time across different races. The maximum population of incarcerated people across different races is 9945 in white population, 24818 in black population, 25074 in latinx population, 2031 in asian or pacific islander population, 1148 native american population, and 4285 in other race population.
+
+3. What is the prison population change from 1970 and 2018 between white people and black people?
+
+```{r dif_70_18, echo=FALSE}
+dif_70_18()
+```
+
+- We are focusing on the difference between 1970 and 2018 white people and black people because these two races have the most data recorded. The difference between the population in 1970 and 2018 of white people is 1666, and black people is 3171. This tells us that both have decreased.
+
+4. What is the average rate of incarcerated people across different races?
+
+```{r avg_rate, echo=FALSE}
+avg_rate()
+```
+
+- We want to calculate the prison rate as compared to the population in the location they are residing in to get a more accurate picture. The average rate of incarcerated people across different races is 437.4771	in white population, 2785.146 in black population, 776.1622 in latinx population, 34.71696 in asian or pacific islander population, and 640.1614 native american population.
+
+5. What is the highest rate of incarcerated people across different races?
+
+```{r max_rate, echo=FALSE}
+max_rate()
+```
+
+- We want to calculate the prison rate as compared to the population in the location they are residing in to get a more accurate picture. The highest rate of incarcerated people across different races is 29870.13	in white population, 2107143 in black population, 1200000 in latinx population, 5882.35 in asian or pacific islander population, and 600000 native american population.
+
+
+### Visualization Charts
+
+```{r graph, echo=FALSE, results='hide', fig.keep='all'}
+plot_date()
+```
+
+This line plot shows the 
+
+
+### Map
+
+```{r map, echo=FALSE, results='hide', fig.keep='all', warning=FALSE}
+map()
+```
