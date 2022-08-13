@@ -1,9 +1,8 @@
 ---
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
-### An introduction of the problem domain and a description of the variable(s) you are choosing to analyze (and why!)
 
 ### Introduction
 
@@ -77,7 +76,7 @@ max_rate()
 plot_date()
 ```
 
-This line plot shows the 
+This graph shows the Population change in prisons on a yearly basis. It is set to visualize the differences in incarceration in the United States. From the graph we can see that the race with the most incarcerated people has been black people. The number of people in prison has an overall upward trend, but has been decreasing in recent years.
 
 
 ### Map
@@ -85,3 +84,11 @@ This line plot shows the
 ```{r map, echo=FALSE, results='hide', fig.keep='all', warning=FALSE}
 map()
 ```
+
+This map compares the rates of incarceration of white people and black people in different states. Since the rates of the other races are missing more data than these two races. The map shows how highly racist the prison system is. Also, the rates of Nebraska, US has the most inequality in incarceration rates between the two races.
+
+```{r map_detail, echo=FALSE, results='hide', fig.keep='all', warning=FALSE}
+map_detail()
+```
+
+Here is a more detailed breakdown of the state mentioned above. This map shows the county-level rates of the state of Nebraska. The plot shows the consistent higher rate of arrest for black people than white people. The county called McPherson experienced the highest rate of prison arrests.

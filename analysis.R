@@ -113,15 +113,21 @@ plot_date <- function() {
                        native_prison_pop,
                        other_race_prison_pop,
                        white_prison_pop)
-  
+  prison_pop_year <- prison_pop_year %>% group_by(year) %>% summarize(white = sum(white_prison_pop, na.rm=TRUE),
+                                                   black = sum(black_prison_pop, na.rm=TRUE),
+                                                   latinx = sum(latinx_prison_pop, na.rm=TRUE),
+                                                   aapi = sum(aapi_prison_pop, na.rm=TRUE),
+                                                   native = sum(native_prison_pop, na.rm=TRUE),
+                                                   other = sum(other_race_prison_pop, na.rm=TRUE))
+  prison_pop_year <- filter(prison_pop_year, year < '2017')
   # Plot data
   prison_pop_plot <- ggplot(prison_pop_year, aes(x=year)) + 
-    geom_line(aes(y=white_prison_pop, color="White"), alpha=0.5) + 
-    geom_line(aes(y=black_prison_pop, color="Black"), alpha=0.5) + 
-    geom_line(aes(y=latinx_prison_pop, color="Latinx"), alpha=0.5) +
-    geom_line(aes(y=native_prison_pop, color="Native American"), alpha=0.5) +
-    geom_line(aes(y=aapi_prison_pop, color="Asian and Pacific Islander"), alpha=0.5) +
-    geom_line(aes(y=other_race_prison_pop, color="Other"), alpha=0.5) +
+    geom_line(aes(y=white, color="White")) + 
+    geom_line(aes(y=black, x=year, color="Black")) + 
+    geom_line(aes(y=latinx, x=year, color="Latinx")) +
+    geom_line(aes(y=aapi, x=year, color="Native American")) +
+    geom_line(aes(y=native, x=year, color="Asian and Pacific Islander")) +
+    geom_line(aes(y=other, x=year, color="Other")) +
     scale_color_manual(name = "Race",
                        values = c("White" = "blue",
                                   "Black" = "red",
@@ -132,7 +138,7 @@ plot_date <- function() {
 
   # Add titles
   prison_pop_plot <- prison_pop_plot + ggtitle("Change in Prison Population Over the Years by Race") +
-    xlab("Race") + ylab("Population")
+    xlab("Year") + ylab("Population")
   
   return(prison_pop_plot)
 }
@@ -142,41 +148,42 @@ plot_date <- function() {
 map <- function() {
   # Filter data
   prison_pop_state <- select(data, state,
-                            aapi_prison_pop,
-                            black_prison_pop,
-                            latinx_prison_pop,
-                            native_prison_pop,
-                            other_race_prison_pop,
-                            white_prison_pop)
+                             white_prison_pop_rate,
+                             black_prison_pop_rate)
   prison_pop_state <- prison_pop_state %>% group_by(state) %>% summarize(
-                         white = max(white_prison_pop, na.rm=TRUE),
-                         black = max(black_prison_pop, na.rm=TRUE),
-                         latinx = max(latinx_prison_pop, na.rm=TRUE),
-                         aapi = max(aapi_prison_pop, na.rm=TRUE),
-                         native = max(native_prison_pop, na.rm=TRUE),
-                         other = max(other_race_prison_pop, na.rm=TRUE))
+    white = mean(white_prison_pop_rate, na.rm=TRUE),
+    black = mean(black_prison_pop_rate, na.rm=TRUE))
   
   # Load map
   plot_usmap()
   p1 <- plot_usmap(data = prison_pop_state, values = 'white', labels=FALSE) +
-                   labs(title = "Population of Incarcerated White People") +
-                   scale_fill_continuous(low = "white", high ="darkblue", limits = c(0, 20000))
+    labs(title = "Rate of Incarcerated White People") +
+    scale_fill_continuous(low = "white", high ="darkblue", limits = c(0, 8000))
   p2 <- plot_usmap(data = prison_pop_state, values = 'black', labels=FALSE) +
-                   labs(title = "Population of Incarcerated Black People") +
-                   scale_fill_continuous(low = "white", high ="darkblue", limits = c(0, 20000))
-  p3 <- plot_usmap(data = prison_pop_state, values = 'latinx', labels=FALSE) +
-                   labs(title = "Population of Incarcerated Latinx People") +
-                   scale_fill_continuous(low = "white", high ="darkblue", limits = c(0, 20000))
-  p4 <- plot_usmap(data = prison_pop_state, values = 'aapi', labels=FALSE) +
-                   labs(title = "Population of Incarcerated AAPI People") +
-                   scale_fill_continuous(low = "white", high ="darkblue", limits = c(0, 20000))
-  p5 <- plot_usmap(data = prison_pop_state, values = 'native', labels=FALSE) +
-                   labs(title = "Population of Incarcerated Native American People") +
-                   scale_fill_continuous(low = "white", high ="darkblue", limits = c(0, 20000))
-  p6 <- plot_usmap(data = prison_pop_state, values = 'other', labels=FALSE) +
-                   labs(title = "Population of Incarcerated Other People") +
-                   scale_fill_continuous(low = "white", high ="darkblue", limits = c(0, 20000))
-  mp <- p1 + p2 + p3 + p4 + p5 + p6
+    labs(title = "Rate of Incarcerated Black People") +
+    scale_fill_continuous(low = "white", high ="darkblue", limits = c(0, 8000))
+  mp <- p1 + p2
+  return(mp)
+}
+
+map_detail <- function() {
+  prison_pop_county <- filter(data, state=='NE')
+  prison_pop_county <- select(prison_pop_county, fips,
+                             white_prison_pop_rate,
+                             black_prison_pop_rate)
+  prison_pop_county <- prison_pop_county %>% group_by(fips) %>% summarize(
+    white = mean(white_prison_pop_rate, na.rm=TRUE),
+    black = mean(black_prison_pop_rate, na.rm=TRUE))
+  
+  p1 <- plot_usmap("counties", include = "NE", data = prison_pop_county, values = 'white', labels=FALSE) +
+    labs(title = "Population of Incarcerated White People") +
+    scale_fill_gradientn(colours = c("white", "orange", "red"),
+                         values = scales::rescale(c(-0.5, -0.49, 0, 0.05, 0.5)), limits= c(0, 720000))
+  p2 <- plot_usmap("counties", include = "NE", data = prison_pop_county, values = 'black', labels=FALSE) +
+    labs(title = "Population of Incarcerated Black People") +
+    scale_fill_gradientn(colours = c("white", "orange", "red"),
+                         values = scales::rescale(c(-0.5, -0.49, 0, 0.05, 0.5)), limits= c(0, 720000))
+  mp <- p1 + p2
   return(mp)
 }
 
